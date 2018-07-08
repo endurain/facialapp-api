@@ -41,7 +41,7 @@ app.post('/signin', (req, res) => {
 
 app.post('/register', (req, res) => {
   const { email, name , password } = req.body;
-  database.users.push({
+  database.user.push({
     id: '125',
     name: name,
     email: email,
@@ -54,17 +54,35 @@ app.post('/register', (req, res) => {
 
 app.get('/profile/:id', (req, res) => {
   const { id } = req.params;
-  database.users.forEach(users => {
+  let found = false;
+  database.users.forEach(user => {
     if (users.id === id) {
-    return res.json(users);
-      } else {
-      res.status(404).json('no such user');
+    found = true;
+    return res.json(user);
     }
   })
+  if (!found) {
+    res.status(400).json('not found');
+  }
+})
+//check image and rank user
+app.post('/image', (req, res) => {
+    const { id } = req.body;
+    let found = false;
+    database.users.forEach(user => {
+      if (user.id === id) {
+        found = true;
+        user.entries++
+        return res.json(user.entries);
+      }
+    })
+    if (!found) {
+      res.status(400).json('not found')
+  }
 })
 
 app.listen(3000, ()=> {
-  // console.log('running port 3000');
+  console.log('running port 3000');
 })
 
 
